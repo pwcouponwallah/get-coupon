@@ -4,20 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Physics Wallah Discount</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --pw-primary: #6c63ff;
-            --pw-secondary: #4a42e8;
-            --pw-accent: #ff6b6b;
-        }
-        
-        body {
+        /* Button Styles - Can be embedded anywhere */
+        .pw-coupon-btn {
+            background: linear-gradient(135deg, #6c63ff, #4a42e8);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
+            font-size: 16px;
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+            margin: 10px 0;
+            box-shadow: 0 4px 6px rgba(108, 99, 255, 0.2);
         }
         
+        .pw-coupon-btn:hover {
+            background: linear-gradient(135deg, #4a42e8, #6c63ff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(108, 99, 255, 0.3);
+        }
+        
+        .pw-coupon-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Modal Styles */
         .pw-modal-overlay {
             position: fixed;
             top: 0;
@@ -48,9 +65,6 @@
             transform: translateY(20px);
             transition: transform 0.3s ease;
             overflow: hidden;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
         }
         
         .pw-modal-overlay.active .pw-modal-container {
@@ -58,7 +72,7 @@
         }
         
         .pw-modal-header {
-            background: linear-gradient(135deg, var(--pw-primary), var(--pw-secondary));
+            background: linear-gradient(135deg, #6c63ff, #4a42e8);
             color: white;
             padding: 20px;
             text-align: center;
@@ -68,6 +82,7 @@
         .pw-modal-header h3 {
             margin: 0;
             font-weight: 700;
+            font-size: 1.5rem;
         }
         
         .pw-close-btn {
@@ -83,8 +98,6 @@
         
         .pw-modal-body {
             padding: 25px;
-            overflow-y: auto;
-            flex-grow: 1;
         }
         
         .form-control {
@@ -93,35 +106,40 @@
             margin-bottom: 15px;
             border: 1px solid #ddd;
             transition: all 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 16px;
         }
         
         .form-control:focus {
-            border-color: var(--pw-primary);
+            border-color: #6c63ff;
             box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+            outline: none;
         }
         
-        .pw-btn {
-            background: linear-gradient(135deg, var(--pw-primary), var(--pw-secondary));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
+        .category-label {
             font-weight: 600;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+            color: #333;
         }
         
-        .pw-btn:hover {
-            background: linear-gradient(135deg, var(--pw-secondary), var(--pw-primary));
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+        .pw-loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
         }
         
-        .pw-btn:active {
-            transform: translateY(0);
+        .pw-loader i {
+            color: #6c63ff;
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         .pw-success-message {
@@ -137,92 +155,25 @@
         }
         
         .pw-success-message h4 {
-            color: var(--pw-primary);
+            color: #6c63ff;
             margin-bottom: 15px;
         }
         
-        .pw-loader {
-            display: none;
-            text-align: center;
-            margin: 10px 0;
-        }
-        
-        .pw-loader i {
-            color: var(--pw-primary);
-            font-size: 2rem;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .pw-coupon-code {
-            background-color: #f8f9fa;
-            border: 2px dashed var(--pw-accent);
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: var(--pw-secondary);
-        }
-        
-        .pw-social-links {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .pw-social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--pw-primary), var(--pw-secondary));
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .pw-social-links a:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
-        }
-        
-        .category-label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
-        }
-        
-        @media (max-width: 576px) {
-            .pw-modal-container {
-                width: 95%;
-            }
-            
-            .pw-modal-body {
-                padding: 20px 15px;
-            }
+        .pw-success-message p {
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
-    <!-- Demo button to trigger the modal -->
-    <div class="container mt-5 text-center">
-        <button id="demoTriggerBtn" class="btn btn-primary btn-lg">Get Your Coupon</button>
-    </div>
+    <!-- Button to embed in any article -->
+    <button class="pw-coupon-btn" id="pwCouponBtn">Get Your Discount Coupon</button>
 
     <!-- Modal Overlay -->
     <div class="pw-modal-overlay" id="pwModal">
         <div class="pw-modal-container">
             <div class="pw-modal-header">
-                <h3>Get Physics Wallah Discount Code</h3>
+                <h3>Get Physics Wallah Discount</h3>
                 <button class="pw-close-btn" id="pwCloseBtn">&times;</button>
             </div>
             
@@ -242,48 +193,48 @@
                             <input type="text" class="form-control" id="courseName" placeholder="PW Course Name" required>
                         </div>
                         <div class="form-group">
-                            <label class="category-label">Coupon Category:</label>
+                            <label class="category-label">Course Category:</label>
                             <select class="form-control" id="courseCategory" required>
                                 <option value="" disabled selected>Select your course category</option>
-                                <option value="PW GATE">1. PW GATE</option>
-                                <option value="PW IIT JAM">2. PW IIT JAM</option>
-                                <option value="PW UPSC">3. PW UPSC</option>
-                                <option value="PW School Preparation">4. PW School Preparation</option>
-                                <option value="PW IIT-JEE">5. PW IIT-JEE</option>
-                                <option value="PW COMMERCE">6. PW COMMERCE</option>
-                                <option value="PW NEET">7. PW NEET</option>
-                                <option value="PW Nursing Exams">8. PW Nursing Exams</option>
-                                <option value="PW MBA">9. PW MBA</option>
-                                <option value="PW IPMAT">10. PW IPMAT</option>
-                                <option value="PW CLAT">11. PW CLAT</option>
-                                <option value="PW IELTS">12. PW IELTS</option>
-                                <option value="PW CSIR NET">13. PW CSIR NET</option>
-                                <option value="PW UGC NET">14. PW UGC NET</option>
-                                <option value="PW CUET UG">15. PW CUET UG</option>
-                                <option value="PW Skills">16. PW Skills</option>
-                                <option value="PW Banking">17. PW Banking</option>
-                                <option value="PW CS">18. PW CS</option>
-                                <option value="PW NDA">19. PW NDA</option>
-                                <option value="PW CA">20. PW CA</option>
-                                <option value="PW SSC">21. PW SSC</option>
-                                <option value="PW Upskilling">22. PW Upskilling</option>
-                                <option value="PW BFSI">23. PW BFSI</option>
-                                <option value="PW OPSC">24. PW OPSC</option>
-                                <option value="PW Railway">25. PW Railway</option>
-                                <option value="PW UP Exams">26. PW UP Exams</option>
-                                <option value="PW AE/JE">27. PW AE/JE</option>
-                                <option value="PW BPSC">28. PW BPSC</option>
-                                <option value="PW JAIIB AND CAIIB">29. PW JAIIB AND CAIIB</option>
-                                <option value="PW TET">30. PW TET</option>
-                                <option value="PW Bihar Exams">31. PW Bihar Exams</option>
-                                <option value="PW Judiciary">32. PW Judiciary</option>
-                                <option value="PW MPPSC">33. PW MPPSC</option>
-                                <option value="PW MPSC">34. PW MPSC</option>
-                                <option value="PW WBPSC">35. PW WBPSC</option>
+                                <option value="PW GATE">PW GATE</option>
+                                <option value="PW IIT JAM">PW IIT JAM</option>
+                                <option value="PW UPSC">PW UPSC</option>
+                                <option value="PW School Preparation">PW School Preparation</option>
+                                <option value="PW IIT-JEE">PW IIT-JEE</option>
+                                <option value="PW COMMERCE">PW COMMERCE</option>
+                                <option value="PW NEET">PW NEET</option>
+                                <option value="PW Nursing Exams">PW Nursing Exams</option>
+                                <option value="PW MBA">PW MBA</option>
+                                <option value="PW IPMAT">PW IPMAT</option>
+                                <option value="PW CLAT">PW CLAT</option>
+                                <option value="PW IELTS">PW IELTS</option>
+                                <option value="PW CSIR NET">PW CSIR NET</option>
+                                <option value="PW UGC NET">PW UGC NET</option>
+                                <option value="PW CUET UG">PW CUET UG</option>
+                                <option value="PW Skills">PW Skills</option>
+                                <option value="PW Banking">PW Banking</option>
+                                <option value="PW CS">PW CS</option>
+                                <option value="PW NDA">PW NDA</option>
+                                <option value="PW CA">PW CA</option>
+                                <option value="PW SSC">PW SSC</option>
+                                <option value="PW Upskilling">PW Upskilling</option>
+                                <option value="PW BFSI">PW BFSI</option>
+                                <option value="PW OPSC">PW OPSC</option>
+                                <option value="PW Railway">PW Railway</option>
+                                <option value="PW UP Exams">PW UP Exams</option>
+                                <option value="PW AE/JE">PW AE/JE</option>
+                                <option value="PW BPSC">PW BPSC</option>
+                                <option value="PW JAIIB AND CAIIB">PW JAIIB AND CAIIB</option>
+                                <option value="PW TET">PW TET</option>
+                                <option value="PW Bihar Exams">PW Bihar Exams</option>
+                                <option value="PW Judiciary">PW Judiciary</option>
+                                <option value="PW MPPSC">PW MPPSC</option>
+                                <option value="PW MPSC">PW MPSC</option>
+                                <option value="PW WBPSC">PW WBPSC</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="pw-btn" id="pwSubmitBtn">Get My Discount Code</button>
+                            <button type="submit" class="pw-coupon-btn" style="width: 100%;" id="pwSubmitBtn">Get My Discount</button>
                         </div>
                     </form>
                     
@@ -295,45 +246,42 @@
                 <div class="pw-success-message" id="pwSuccessMessage">
                     <i class="fas fa-check-circle"></i>
                     <h4>Success!</h4>
-                    <p>Your discount code has been generated and sent to your email.</p>
-                    <div class="pw-coupon-code" id="generatedCoupon">
-                        YUGNA00001
-                    </div>
-                    <p>Check your inbox (and spam folder) for more details.</p>
-                    <div class="pw-social-links">
-                        <a href="https://telegram.me/pw_coupon_code_2024_25_26_27" target="_blank"><i class="fab fa-telegram"></i></a>
-                        <a href="https://whatsapp.com/channel/0029VaeqAkrHLHQaZDMY5p3u" target="_blank"><i class="fab fa-whatsapp"></i></a>
-                    </div>
+                    <p>Your exclusive discount code has been sent to your email address.</p>
+                    <p>Please check your inbox (and spam folder) for the coupon code.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome for icons (optional) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('pwModal');
+            const couponBtn = document.getElementById('pwCouponBtn');
             const closeBtn = document.getElementById('pwCloseBtn');
             const form = document.getElementById('pwDiscountForm');
             const formContainer = document.getElementById('pwFormContainer');
             const successMessage = document.getElementById('pwSuccessMessage');
             const loader = document.getElementById('pwLoader');
-            const demoTriggerBtn = document.getElementById('demoTriggerBtn');
             
-            // Demo button to show modal
-            demoTriggerBtn.addEventListener('click', function() {
+            // Button to show modal
+            couponBtn.addEventListener('click', function() {
                 modal.classList.add('active');
             });
             
             // Close modal
             closeBtn.addEventListener('click', function() {
                 modal.classList.remove('active');
+                resetForm();
             });
             
             // Close when clicking outside modal
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) {
                     modal.classList.remove('active');
+                    resetForm();
                 }
             });
             
@@ -355,13 +303,8 @@
                     timestamp: new Date().toISOString()
                 };
                 
-                // Fixed coupon code
-                const couponCode = 'YUGNA00001';
-                document.getElementById('generatedCoupon').textContent = couponCode;
-                formData.couponCode = couponCode;
-                
                 // Send data to Google Apps Script
-                const scriptURL = 'https://script.google.com/macros/s/AKfycbwTB468jCkG6l-UB19wk28YfhWGSIfnil-GFD9lTwVYeqd1wy7iBQhUEq-t8LiyxA95/exec'; // Replace with your web app URL
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbzw6AWrPoccHaTuJtRz4RpZ1jpSpCgWlec83l_R4HBqldA0Ypb8cKmS4bBXgNnWFrE/exec';
                 
                 fetch(scriptURL, {
                     method: 'POST',
@@ -376,14 +319,10 @@
                     loader.style.display = 'none';
                     successMessage.style.display = 'block';
                     
-                    // Reset form
-                    form.reset();
-                    
                     // Close modal after 5 seconds
                     setTimeout(() => {
                         modal.classList.remove('active');
-                        successMessage.style.display = 'none';
-                        formContainer.style.display = 'block';
+                        resetForm();
                     }, 5000);
                 })
                 .catch(error => {
@@ -393,6 +332,14 @@
                     alert('Something went wrong. Please try again.');
                 });
             });
+            
+            // Reset form and UI
+            function resetForm() {
+                form.reset();
+                formContainer.style.display = 'block';
+                successMessage.style.display = 'none';
+                loader.style.display = 'none';
+            }
         });
     </script>
 </body>
