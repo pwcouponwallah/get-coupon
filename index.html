@@ -761,6 +761,38 @@
             line-height: 1.6;
         }
         
+        /* Error State */
+        .error-state {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .error-icon {
+            width: 4rem;
+            height: 4rem;
+            background-color: rgba(200,0,0,0.1);
+            color: #d00000;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .error-state h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .error-state p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
         /* Mobile Menu */
         .mobile-menu {
             position: fixed;
@@ -1325,6 +1357,15 @@
                     <p>Your exclusive discount code has been sent to your email address. Please check your inbox (and spam folder) for the coupon code.</p>
                     <p>Use it at checkout to get your discount.</p>
                 </div>
+                
+                <div class="error-state" id="errorState">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation"></i>
+                    </div>
+                    <h4>Something Went Wrong</h4>
+                    <p>We couldn't process your request at this time. Please try again later or contact our support team for assistance.</p>
+                    <button class="btn btn-secondary" onclick="resetForm()">Try Again</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1373,6 +1414,7 @@
             const formContainer = document.getElementById('formContainer');
             const loadingState = document.getElementById('loadingState');
             const successState = document.getElementById('successState');
+            const errorState = document.getElementById('errorState');
             const courseCategoryInput = document.getElementById('courseCategory');
             
             // Main button to show modal
@@ -1407,6 +1449,8 @@
                 // Show loading state
                 formContainer.style.display = 'none';
                 loadingState.style.display = 'block';
+                successState.style.display = 'none';
+                errorState.style.display = 'none';
                 
                 // Get form values
                 const formData = {
@@ -1418,11 +1462,19 @@
                     timestamp: new Date().toISOString()
                 };
                 
-                // Simulate API call (replace with actual fetch to your backend)
-                setTimeout(() => {
-                    // In a real implementation, you would send this data to your server
-                    console.log('Form data:', formData);
-                    
+                // Your Google Apps Script deployment URL
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbxZc0dOJXR2bOS9cyGEJN5fCP6rXOde5z0qq-NCaoMgzaTJBYFrcChe-ItYrEU1wv-x/exec';
+                
+                // Send data to Google Apps Script
+                fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(() => {
                     // Hide loader and show success message
                     loadingState.style.display = 'none';
                     successState.style.display = 'block';
@@ -1433,7 +1485,12 @@
                         document.body.style.overflow = '';
                         resetForm();
                     }, 5000);
-                }, 2000); // Simulate network delay
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingState.style.display = 'none';
+                    errorState.style.display = 'block';
+                });
             });
             
             // Reset form and UI
@@ -1442,6 +1499,7 @@
                 formContainer.style.display = 'block';
                 loadingState.style.display = 'none';
                 successState.style.display = 'none';
+                errorState.style.display = 'none';
             }
         });
         
